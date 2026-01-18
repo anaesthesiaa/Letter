@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Письмо</title>
+<style>
+  /* Стиль для тела страницы */
+  body {
+    background-color: #241d1d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 5%;
+    position: relative;
+    font-family: 'Courier New', monospace;
+  }
+
+  /* Контейнер для изображения - центрирование */
+  .image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+  }
+
+  /* Стиль для изображения */
+  #slideshow {
+    max-width: 80%;
+    height: auto;
+    cursor: pointer;
+    transition: opacity 1s ease-in-out;
+    display: block;
+  }
+
+  /* Стиль для подсказки - FIXED позиционирование */
+  #hint {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(14, 12, 12, 0.8);
+    color: white;
+    padding: 20px 30px;
+    border-radius: 15px;
+    font-family: 'Courier New', monospace;
+    font-size: clamp(16px, 4vw, 22px);
+    text-align: center;
+    width: 80%;
+    max-width: 600px;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    pointer-events: none;
+    z-index: 10;
+    line-height: 1.4;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    border: 1px solid #382d2d;
+  }
+
+  /* Курсор мигающий как у печатной машинки */
+  #hint::after {
+    content: '|';
+    animation: blink 0.7s infinite;
+    margin-left: 2px;
+  }
+
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="image-container">
+  <img id="slideshow" src="foto1.png" alt="Фото" />
+</div>
+<div id="hint"></div>
+
+<script>
+  const images = ['foto1.png', 'foto2.png', 'foto3.png', 'foto4.png'];
+  let currentIndex = 0;
+
+  const imgElement = document.getElementById('slideshow');
+  const hintElement = document.getElementById('hint');
+
+  // Текст подсказки
+  const hintText = "я написала для тебя письмо, чтобы прочесть его – нажми";
+  
+  // Функция печатной машинки
+  function typeWriter(text, element, speed = 50) {
+    let i = 0;
+    element.innerHTML = '';
+    
+    function type() {
+      if (i < text.length) {
+        element.innerHTML += text.charAt(i);
+        i++;
+        setTimeout(type, speed);
+      }
+    }
+    type();
+  }
+
+  // Функция для показа подсказки
+  function showHint() {
+    hintElement.style.opacity = 1;
+    typeWriter(hintText, hintElement, 100);
+    
+    // Автоматическое скрытие через 5 секунд
+    setTimeout(() => {
+      hintElement.style.opacity = 0;
+      
+      // Убираем курсор при скрытии
+      setTimeout(() => {
+        hintElement.innerHTML = '';
+      }, 500);
+    }, 7000);
+  }
+
+  // Показываем подсказку при загрузке страницы
+  window.addEventListener('load', () => {
+    setTimeout(showHint, 500);
+  });
+
+  imgElement.addEventListener('click', () => {
+    // Скрываем подсказку при клике
+    hintElement.style.opacity = 0;
+    hintElement.innerHTML = '';
+    
+    // Начинаем плавное исчезновение изображения
+    imgElement.style.opacity = 0;
+
+    // После исчезновения меняем изображение
+    setTimeout(() => {
+      currentIndex = (currentIndex + 1) % images.length;
+      imgElement.src = images[currentIndex];
+      imgElement.style.opacity = 1;
+    }, 1000);
+  });
+</script>
+
+</body>
+</html>
